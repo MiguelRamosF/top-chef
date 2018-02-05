@@ -60,9 +60,10 @@ function scrape(url) {
                                 console.log('One restaurant has been added.');
                             }
                             else {
-                                return console.log("EROOR");
+                                return console.log(err);
                             }
                         });
+                        console.log(json);
                     });
                 });
             });
