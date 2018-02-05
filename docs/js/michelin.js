@@ -68,7 +68,7 @@ function Scrape(url){
              			 json.restaurants.push(restaurant);
              				 fs.writeFile('restaurants.json',JSON.stringify(json),'utf-8',function(err){  //store the data 
              	 				 if(err) return console.log(err);
-             			 		 else return console.log("json progressing...");
+             			 		 else return console.log("json processing...");
             		 		});
              		 	 console.log(json);
           	 	 	 }); 
@@ -78,5 +78,5 @@ function Scrape(url){
   	});
 }
 
-Scrape("https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin");
+Scrape(starter_url);
 
