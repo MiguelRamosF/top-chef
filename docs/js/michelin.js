@@ -2,6 +2,7 @@
 var request = require('requestretry'); //When the connection fails with one of ETIMEDOUT the request will automatically be re-attempted as these are often recoverable errors and will go away on retry
 var cheerio = require('cheerio');      //Fast, flexible & lean implementation of core jQuery designed specifically for the server
 var fs = require('fs');                //work with the file system
+var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 
 var json = { "restaurants": [] };
 var starter_url = "https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin";
@@ -84,7 +85,7 @@ function getRestaurant(url,done){
 	function(err,resp,html){
 		if (err) console.log("error at url : " + url);
 		else{
-			count_i();
+			//count_i();
 			const $=cheerio.load(html);
 			var name = $('h1').first().text();
 			var address = $('.thoroughfare').first().text();
@@ -109,13 +110,13 @@ function getRestaurant(url,done){
 function make_Json(restaurant)
 {
 	json.restaurants.push(restaurant);
-	fs.writeFile(json_name,JSON.stringify(json),'utf-8',
+	console.log(json.restaurants.length);
+	/*fs.writeFile(json_name,JSON.stringify(json),'utf-8',
 		function(err){  //store the data 
           	 if(err) console.log("error with restaurant " + restaurant);
              else return console.log(json.restaurants.length+" restaurants added to json file");
-         });
+         });*/
 }
-
 
 //Main function
 function scrapeAllRestaurants(url){
@@ -137,4 +138,13 @@ function scrapeAllRestaurants(url){
 	 })
 }
 
-scrapeAllRestaurants(starter_url);
+//scrapeAllRestaurants(starter_url);
+
+
+//Get the restaurants from the json file (sync function)
+function get() {
+ 	 var json = JSON.parse(fs.readFileSync('restaurants.json', 'utf8'));
+ 	 return json;
+}
+
+module.exports.get = get; 
