@@ -2,7 +2,6 @@
 var request = require('requestretry'); //When the connection fails with one of ETIMEDOUT the request will automatically be re-attempted as these are often recoverable errors and will go away on retry
 var cheerio = require('cheerio');      //Fast, flexible & lean implementation of core jQuery designed specifically for the server
 var fs = require('fs');                //work with the file system
-var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 
 var json = { "restaurants": [] };
 var starter_url = "https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin";
@@ -107,8 +106,7 @@ function getRestaurant(url,done){
 }
 
 // Function add restaurant to json array and make a file from the json array
-function make_Json(restaurant)
-{
+function make_Json(restaurant){
 	json.restaurants.push(restaurant);
 	console.log(json.restaurants.length);
 	/*fs.writeFile(json_name,JSON.stringify(json),'utf-8',
