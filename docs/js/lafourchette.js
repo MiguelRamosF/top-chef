@@ -8,17 +8,10 @@ var fs = require('fs');                //work with the file system
 var json_data = michelin.get();
 var json_deal={ "deals": [] };
 var json_name="deals.json";
-var numberOfDeals = 0;
 
 //Test : get all deals from all restaurants and store the deals in json
-/*function get_names(){
-	 var names=[];
-	 json_data.restaurants.forEach(function(elem){
-		 names.push(elem.name);
-	 })
-	 console.log(names);
-}*/
 
+//Function to create an array of restaurants names from michelin.js
 function get_names(){
 	 var names=[];
 	 for(var i=0; i<json_data.restaurants.length;i++){
@@ -26,20 +19,6 @@ function get_names(){
 	 }
 	 return names;
 }
-//get_names();
-/*function init(){
-	 var names_list = get_names();
-	 var id_list = []
-	 //var id_list = get_id(names_list);
-	 for(var i=0;i<names_list.length;i++){
-	 	 get_id(names_list[i],function(id){
-	 	  	 id_list.push(id);
-	 	  	 console.log(id_list.length);
-	 	 });
-	 }
-	 
-}*/
-//END test
 
 //returns the url to get the restaurant id
 function correct_url(name){
@@ -77,73 +56,49 @@ function get_id(name,done){
          		console.log("empty url : " + url);
          	 }
 	});
-
 }
 
-function count_deals(json_deal)
-{
-	deals_added==json_deal.deals.length;
-}
 
-//Async function, stores the deal in json
+//Async function, get deal from the api url of lafourchette
 function getDeal(restaurant,done){
 	var la_f_id=0;
-	 get_id(restaurant,function(id){
+	get_id(restaurant,function(id){
 		 la_f_id=id;
 		 var urlDeal = "https://m.lafourchette.com/api/restaurant/"+id+"/sale-type";
 
+		 request({
+			 url: urlDeal,
+  			 json: true, // The below parameters are specific to request-retry
+  		     maxAttempts: 3,   //  try 3 times
+  	 		 retryDelay: 10,  //  wait for 0.005s before trying again
+  		     retryStrategy: request.RetryStrategies.HTTPOrNetworkError // (default) retry on 5xx or network errors
+  		 },
+  		 	function(err,resp,json){
+  		 		 if (err) console.log("error at url : " + urlDeal);
+  		 		 else{
+  		 		     for(var i=0;i<json.length;i++){
+  		 				 if(json[i].is_special_offer){
+  		 					 var deal_title = json[i].title;
+  		 					 var deal_description = json[i].description;
+  		 					 var deal = {
+  		 			    		 "name": restaurant,
+  		 						 "id_restaurant": id,
+  		 						 "deal_title": deal_title,
+  		 						 "deal_description": deal_description
+  		 					 };
+  		 					 done(deal);
+  		 				 }
 
-	request({
-  				 url: urlDeal,
-  			 	 json: true, // The below parameters are specific to request-retry
-  				 maxAttempts: 3,   //  try 3 times
-  	 		  	 retryDelay: 10,  //  wait for 0.005s before trying again
-  		 		 retryStrategy: request.RetryStrategies.HTTPOrNetworkError // (default) retry on 5xx or network errors
-			},
-	function(err,resp,json){
-		if (err) console.log("error at url : " + urlDeal);
-		else{
-			//console.log(body);
-			
-			for(var i=0;i<json.length;i++){
-    	 	 		 	 if(json[i].is_special_offer){
-    	 	 		 	 	 var deal_title = json[i].title;
-    	 	 		 	 	 var deal_description = json[i].description;
-    	 	 		 	 	 var deal = {
-				 		 	 "restaurant": restaurant,
-				 			 "id_restaurant": id,
-				 			 "deal_title": deal_title,
-				 			 "deal_description": deal_description
-							 };
-    	 	 		 	 	 //json_deal.deals.push(deal);
-    	 	 		 	 	 //console.log(json_deal);
-    	 	 		 	 	 //numberOfDeals++;
-    	 	 		 	 	 //console.log("number of deals:" + numberOfDeals);
-    	 	 		 	 	 done(deal);
-    	 	 		 	 	 //done(json_deal);
-    	 	 		 	 }
-    	 	 		 	 /*else{
-    	 	 		 	 	 console.log("ce menu n'est pas un deal :"+json[i].title);
-    	 	 		 	 }*/
-    	 	 		 }
-		}
+  		 			 }
+  		 		 }
+  		     }
+  		 );
 	});
-});
 }
 
-/*function count_deals(){
-	numberOfDeals++;
-}*/
-//Async function, stores the deal in json
-
-// Function add restaurant to json array and make a file from the json array
+// Function add deal to json array and make a file from the json array
 function make_Json(deal){
 	json_deal.deals.push(deal);
-	//console.log("json deals length" +json_deal.deals.length);
-	//numberOfDeals++;
-
-	//if(numberOfDeals==json_deal.deals.length){
-	//console.log(json_deal.deals.length);
 	fs.writeFile(json_name,JSON.stringify(json_deal),'utf-8',
 		function(err){  //store the data 
           	 if(err) console.log("error with deal " + deal);
@@ -152,14 +107,7 @@ function make_Json(deal){
 }
 
 
-function get_names(){
-	var names = [];
-	 for(var i=0; i<json_data.restaurants.length;i++){
-	 	 names.push(json_data.restaurants[i].name);
-	 }
-	 return names;
-}
-
+//Getting all deals from lafourchette
 function getAllDeals(){
 	 var restaurant_names = get_names()
 	 for(var i=0; i<restaurant_names.length; i++)
@@ -172,5 +120,4 @@ function getAllDeals(){
 }
 
 getAllDeals();
-//getDeal2("le chiberta");
-//getDeal("le restaurant");
+
