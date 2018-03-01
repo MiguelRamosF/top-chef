@@ -1,4 +1,4 @@
-var request = require('request');
+//var request = require('request');
 var cheerio = require('cheerio');
 var michelin = require('./michelin');
 var XMLHttpRequest = require('xhr2');
@@ -12,13 +12,13 @@ var json_name="deals.json";
 //Test : get all deals from all restaurants and store the deals in json
 
 //Function to create an array of restaurants names from michelin.js
-function get_names(){
+/*function get_names(){
 	 var names=[];
 	 for(var i=0; i<json_data.restaurants.length;i++){
 	 	 names.push(json_data.restaurants[i].name);
 	 }
 	 return names;
-}
+}*/
 
 //returns the url to get the restaurant id
 function correct_url(name){
@@ -33,8 +33,8 @@ function correct_url(name){
 	 return id_url;
 }
 //Async function, returns the id depending on the name
-function get_id(name,done){
-	 var url = correct_url(name);
+function get_id(restaurant,done){
+	 var url = correct_url(restaurant.name);
 	 request({
   				 url: url,
   			 	 json: true, // The below parameters are specific to request-retry
@@ -81,12 +81,13 @@ function getDeal(restaurant,done){
   		 					 var deal_title = json[i].title;
   		 					 var deal_description = json[i].description;
   		 					 var deal = {
-  		 			    		 "name": restaurant,
+  		 			    	 "name": restaurant.name,
   		 						 "id_restaurant": id,
   		 						 "deal_title": deal_title,
   		 						 "deal_description": deal_description
   		 					 };
-  		 					 done(deal);
+  		 					 json_deal.deals.push(deal);
+                 done(json_deal);
   		 				 }
 
   		 			 }
@@ -109,14 +110,13 @@ function make_Json(deal){
 
 //Getting all deals from lafourchette
 function getAllDeals(){
-	 var restaurant_names = get_names()
-	 for(var i=0; i<restaurant_names.length; i++)
+	 //var restaurant_names = get_names()
+	 for(var i=0; i<json_data.restaurants.length; i++)
 	 {
-	 	 getDeal(restaurant_names[i], function(deal){
-	 	 	 make_Json(deal);
+	 	 getDeal(json_data.restaurants[i], function(json_deal){
+	 	 	 console.log(json_deal.deals.length);
 	 	 });
 	 }
-
 }
 
 getAllDeals();
