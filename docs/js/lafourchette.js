@@ -84,6 +84,7 @@ function getDeal(restaurant,done){
   		 		 	if(json[i].is_special_offer){
   		 		 		var deal_title = json[i].title;
   		 		 		var deal_description = json[i].description;
+  		 		 		var lafourchetteURL = "https://www.lafourchette.com/restaurant/"+restaurant.name+"/"+id;
   		 		 		var deal = {
   		 		 			"id_restaurant": id,
   		 		 			"name": restaurant.name,
@@ -93,7 +94,8 @@ function getDeal(restaurant,done){
   		 		 			"city" : restaurant.city,
   		 		 			"stars" : restaurant.stars,
   		 		 			"deal_title": deal_title,
-  		 		 			"deal_description": deal_description
+  		 		 			"deal_description": deal_description,
+  		 		 			"lafourchetteURL" : lafourchetteURL
   		 		 		};
   		 		 		done(deal);
   		 		 	}
