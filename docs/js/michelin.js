@@ -66,18 +66,22 @@ function urls_Limit(urls_restaurant){
 	//console.log(count_resto_urls);
 }
 
+function getStars(){
+
+}
+
 /*function count_i() //Debug
 {
 	i++;
 	console.log(i);
 }*/
-
+//var chefs =[];
 //Scrape information on the restaurant url
 function getRestaurant(url,done){
 	request({
   				 url: url,
   			 	 json: true, // The below parameters are specific to request-retry
-  				 maxAttempts: 3,   //  try 3 times
+  				 maxAttempts: 10,   //  try 3 times
   	 		  	 retryDelay: 10,  //  wait for 0.005s before trying again
   		 		 retryStrategy: request.RetryStrategies.HTTPOrNetworkError // (default) retry on 5xx or network errors
 			},
@@ -87,16 +91,22 @@ function getRestaurant(url,done){
 			//count_i();
 			const $=cheerio.load(html);
 			var name = $('h1').first().text();
+			var stars = $('.michelin-poi-distinctions-list').text().charAt(0);
 			var address = $('.thoroughfare').first().text();
 			var zipcode = $('.postal-code').first().text();
 			var city = $('.locality').first().text();
-			var chef = $('.field--name-field-chef').children('.field__items').text();
+			var chef = $('.field--name-field-chef').children('.field__items').first().text();
+			/*if(chef != ""){
+				chefs.push(chef); //Count number of chefs
+			}
+			console.log("CHEFS LENGTH /:" + chefs.length);*/
 			var restaurant = {
 				 "name": name,
-				  "address": address,
+				 "address": address,
 				 "zipcode": zipcode,
 				 "city": city,
-				 "chef": chef
+				 "chef": chef,
+				 "stars": stars
 			};
 
 			make_Json(restaurant);
@@ -109,12 +119,15 @@ function getRestaurant(url,done){
 function make_Json(restaurant){
 	json.restaurants.push(restaurant);
 	console.log(json.restaurants.length);
-	/*fs.writeFile(json_name,JSON.stringify(json),'utf-8',
+	//if(json.restaurants.length==count_resto_urls){
+		fs.writeFile(json_name,JSON.stringify(json),'utf-8',
 		function(err){  //store the data 
           	 if(err) console.log("error with restaurant " + restaurant);
              else return console.log(json.restaurants.length+" restaurants added to json file");
-         });*/
+         });
+	//}
 }
+
 
 //Main function
 function scrapeAllRestaurants(url){
