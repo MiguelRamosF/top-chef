@@ -7,14 +7,25 @@ const RESTAURANTS=data.deals;
 class ProductRow extends React.Component {
   render() {
     const restaurant = this.props.restaurant;
+    const stars = [];
+    if(restaurant.stars=="1") stars.push(<i class="fa fa-star"></i>);
+    if(restaurant.stars=="2") stars.push(<i class="fa fa-star"></i>,<i class="fa fa-star"></i>);
+    if(restaurant.stars=="3") stars.push(<i class="fa fa-star"></i>,<i class="fa fa-star"></i>,<i class="fa fa-star"></i>);
 
     return (
+      <div class="col-md-4">
+      <div class="card card-01">
+          <img class="card-img-top" src="https://2c6disor5j62kph211fg7v42-wpengine.netdna-ssl.com/wp-content/uploads/2017/01/IMG_6686_C_Large-300x200.jpg" alt="Card image cap"></img>
+          <div class="card-body">
+            <span class="badge-box">{stars}</span>
+            <h4 class="card-title">{restaurant.name}</h4>
+            <p class="card-text">{restaurant.deal_title}</p>
+            <a href={restaurant.lafourchetteURL} class="btn btn-default text-uppercase">Go to deal !</a>
+          </div>
+
+          </div>
+          </div>
       
-      <tr>
-        <td>{restaurant.name}</td>
-        <td>{restaurant.deal_title}</td>
-        <td>{restaurant.stars}</td>
-      </tr>
     );
   }
 }
@@ -50,33 +61,13 @@ class ProductTable extends React.Component {
     });
 
     return (
-      
 
+        <div class="row">
+
+          {rows}
+        </div>
             
-
-
-          <table class="table table-hover" width="100%">
-        <thead>
-          <tr>
-            <th width="40%">Restaurant</th>
-            <th width="40%">Deal</th>
-            <th width="20%">Etoiles</th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
         
-
-
-              
-
-      
-
-
-      
-      
-            
-      
     );
   }
 }
@@ -98,9 +89,13 @@ class SearchBar extends React.Component {
   
   render() {
     return (
-      <form>
+
+
       <div class="form-group">
+
+      <h2 class="text-center"><span>Top Chef Project</span>There's really no reason to pay full retail price for most starred restaurants because there are so many resources on the Web that can help you compare prices. This web application helps you to get the best deals on starred France's resturants</h2>    
         <label >Enter the name of the restaurant :</label>
+        <form >
         <input
           class="form-control"
           type="text"
@@ -108,6 +103,7 @@ class SearchBar extends React.Component {
           value={this.props.filterText}
           onChange={this.handleFilterTextChange}
         />
+        </form>
         <br/>
         <label >Filter by stars :</label>
         <select  class="form-control" onChange={this.handleOneStarChange} >
@@ -116,8 +112,9 @@ class SearchBar extends React.Component {
           <option value="2">2 star only</option>
           <option value="3">3 star only</option>
         </select>
+        <br/>
       </div>
-      </form>
+      
     );
   }
 }
@@ -148,7 +145,8 @@ class FilterableProductTable extends React.Component {
 
   render() {
     return (
-      <div>
+      
+      <div class="container">
         <SearchBar
           filterText={this.state.filterText}
           oneStarOnly={this.state.oneStarOnly}
@@ -161,6 +159,7 @@ class FilterableProductTable extends React.Component {
           oneStarOnly={this.state.oneStarOnly}
         />
       </div>
+      
     );
   }
 }
