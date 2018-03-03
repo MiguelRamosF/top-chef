@@ -4,32 +4,12 @@ import './index.css';
 var data = require('./deals.json');
 const RESTAURANTS=data.deals;
 
-//var datatest = require('./test.json'); // forward slashes will depend on the file location
-//const monjstest=datatest.la_fourchette_deals;
-/*for(var i = 0; i < data.deals.length; i++) {
-    
-  
-    console.log("Names" + data.deals[i].name );
-}*/
-
-/*class ProductCategoryRow extends React.Component {
-  render() {
-    const category = this.props.category;
-    return (
-      <tr>
-        <th colSpan="2">
-          {category}
-        </th>
-      </tr>
-    );
-  }
-}*/
-
 class ProductRow extends React.Component {
   render() {
     const restaurant = this.props.restaurant;
 
     return (
+      
       <tr>
         <td>{restaurant.name}</td>
         <td>{restaurant.deal_title}</td>
@@ -45,7 +25,6 @@ class ProductTable extends React.Component {
     const oneStarOnly = this.props.oneStarOnly;
 
     const rows = [];
-    //let lastCategory = null;
 
     this.props.restaurants.forEach((restaurant) => {
       if (restaurant.name.toLowerCase().search(filterText.toLowerCase()) === -1) {
@@ -60,33 +39,44 @@ class ProductTable extends React.Component {
       if (oneStarOnly==="3" && !(restaurant.stars==="3")) {
         return;
       }
-      //if (product.category !== lastCategory) {
-        /*rows.push(
-          <ProductCategoryRow
-            category={product.category}
-            key={product.category} />
-        );*/
-      //}
+
       rows.push(
         <ProductRow
           restaurant={restaurant}
           key={restaurant.id_deal}
         />
       );
-      //lastCategory = product.category;
+
     });
 
     return (
-      <table>
+      
+
+            
+
+
+          <table class="table table-hover" width="100%">
         <thead>
           <tr>
-            <th>Restaurant</th>
-            <th>Deal</th>
-            <th>Etoiles</th>
+            <th width="40%">Restaurant</th>
+            <th width="40%">Deal</th>
+            <th width="20%">Etoiles</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>
       </table>
+        
+
+
+              
+
+      
+
+
+      
+      
+            
+      
     );
   }
 }
@@ -109,18 +99,24 @@ class SearchBar extends React.Component {
   render() {
     return (
       <form>
+      <div class="form-group">
+        <label >Enter the name of the restaurant :</label>
         <input
+          class="form-control"
           type="text"
           placeholder="Search..."
           value={this.props.filterText}
           onChange={this.handleFilterTextChange}
         />
-        <select  onChange={this.handleOneStarChange} >
+        <br/>
+        <label >Filter by stars :</label>
+        <select  class="form-control" onChange={this.handleOneStarChange} >
           <option value="0">All stars</option>
           <option value="1">1 star only</option>
           <option value="2">2 star only</option>
           <option value="3">3 star only</option>
         </select>
+      </div>
       </form>
     );
   }
