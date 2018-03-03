@@ -65,10 +65,8 @@ function get_id(restaurant,done){
 
 //Async function, get deal from the api url of lafourchette
 function getDeal(restaurant,done){
-	var la_f_id=0;
-	get_id(restaurant,function(id){
-		la_f_id=id;
-		var urlDeal = "https://m.lafourchette.com/api/restaurant/"+id+"/sale-type";
+	get_id(restaurant,function(la_f_id){
+		var urlDeal = "https://m.lafourchette.com/api/restaurant/"+la_f_id+"/sale-type";
 		request({
 			 url: urlDeal,
   			 json: true, // The below parameters are specific to request-retry
@@ -82,11 +80,13 @@ function getDeal(restaurant,done){
   		 		 //console.log(json);
   		 		for(var i=0;i<json.length;i++){
   		 		 	if(json[i].is_special_offer){
+              var deal_id = json[i].id;
   		 		 		var deal_title = json[i].title;
   		 		 		var deal_description = json[i].description;
-  		 		 		var lafourchetteURL = "https://www.lafourchette.com/restaurant/"+restaurant.name+"/"+id;
+  		 		 		var lafourchetteURL = "https://www.lafourchette.com/restaurant/"+restaurant.name+"/"+la_f_id;
   		 		 		var deal = {
-  		 		 			"id_restaurant": id,
+                "id_deal" : deal_id,
+  		 		 			"id_restaurant": la_f_id,
   		 		 			"name": restaurant.name,
   		 		 			"address" : restaurant.address,
   		 		 			"zipcode" : restaurant.zipcode,
