@@ -63,11 +63,8 @@ class ProductTable extends React.Component {
     return (
 
         <div class="row">
-
           {rows}
-        </div>
-            
-        
+        </div>                
     );
   }
 }
@@ -89,7 +86,6 @@ class SearchBar extends React.Component {
   
   render() {
     return (
-
 
       <div class="form-group">
 

@@ -2,8 +2,9 @@
 
 ```sh
 1)Open command prompt on top-chef-client
-2)Enter this command : 
+2)Enter these commands : 
 
+npm install
 npm start
 
 ```
