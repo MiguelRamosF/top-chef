@@ -35,54 +35,58 @@ function correct_url(name){
 }
 
 //Async function, returns the id depending on the name
-function get_id(restaurant,done){
+function get_id(restaurant){
 	var url = correct_url(restaurant.name);
-	request({
+	return new Promise((resolve, reject) => {
+		request({
 		url: url,
   		json: true, // The below parameters are specific to request-retry
-  		maxAttempts: 3,   //  try 3 times
-  	 	retryDelay: 5,  //  wait for 0.005s before trying again
+  		maxAttempts: 10,   //  try 3 times
+  	 	retryDelay: 10,  //  wait for 0.005s before trying again
   		retryStrategy: request.RetryStrategies.HTTPOrNetworkError // (default) retry on 5xx or network errors
   	},
   	function(err,resp,json){
-  		if (err) console.log("error at url : " + url + err);
+  		if (err) return reject(err);//console.log("error at url : " + url + err);
   		else if(resp.statusCode==400) console.log("Bad REQUEST 400" + url)
   		else if(json.length!=0 && resp.statusCode == 200){
-			for(var i=0;i<json.length;i++){
-    	 	 	if(json[i].address.postal_code==restaurant.zipcode){
-    	 	 	 	var id = json[i].id;
-    	 	 	 	done(id);
+
+  			json.forEach(element=>{
+  				if(element.address.postal_code==restaurant.zipcode){
+    	 	 	 	var id = element.id;
+    	 	 	 	return resolve(id);
     	 	 	}
-    	 	 	 //else console.log("id not found in url :" + url);
-    	 	}
+
+  			})
     	}
     	else{
     	 	console.log("empty url : " + url);
     	}
     });
+});
 }
 
-
 //Async function, get deal from the api url of lafourchette
-function getDeal(restaurant,done){
-	get_id(restaurant,function(la_f_id){
+function getDeal(restaurant,la_f_id){
+
+		return new Promise((resolve, reject) => { 
 		var urlDeal = "https://m.lafourchette.com/api/restaurant/"+la_f_id+"/sale-type";
 		request({
 			 url: urlDeal,
   			 json: true, // The below parameters are specific to request-retry
-  		     maxAttempts: 3,   //  try 3 times
-  	 		 retryDelay: 5,  //  wait for 0.005s before trying again
+  		     maxAttempts: 10,   //  try 3 times
+  	 		 retryDelay: 10,  //  wait for 0.005s before trying again
   		     retryStrategy: request.RetryStrategies.HTTPOrNetworkError // (default) retry on 5xx or network errors
   		 },
   		 function(err,resp,json){
-  		 	if (err) console.log("error at url : " + urlDeal);
+  		 	if (err) return reject(err);//console.log("error at url : " + urlDeal);
   		 	else{
   		 		 //console.log(json);
-  		 		for(var i=0;i<json.length;i++){
-  		 		 	if(json[i].is_special_offer){
-              var deal_id = json[i].id;
-  		 		 		var deal_title = json[i].title;
-  		 		 		var deal_description = json[i].description;
+  		 		 json.forEach(element=>{
+
+  		 		 	if(element.is_special_offer){
+              var deal_id = element.id;
+  		 		 		var deal_title = element.title;
+  		 		 		var deal_description = element.description;
   		 		 		var lafourchetteURL = "https://www.lafourchette.com/restaurant/"+restaurant.name+"/"+la_f_id;
   		 		 		var deal = {
                 "id_deal" : deal_id,
@@ -97,12 +101,17 @@ function getDeal(restaurant,done){
   		 		 			"deal_description": deal_description,
   		 		 			"lafourchetteURL" : lafourchetteURL
   		 		 		};
-  		 		 		done(deal);
+  		 		 		return resolve(deal);
   		 		 	}
+
+  		 		 })	;
+  		 		 //return resolve(deal);
+  		 		 	
   		 		}
   		 	}
-  		 }
+  		 
   		);
+
 	});
 }
 
@@ -119,15 +128,57 @@ function make_Json(deal){
 
 
 //Getting all deals from lafourchette
-function getAllDeals(){
-	var json_deals={ "deals": [] };
-	 for(var i=0; i<json_data.restaurants.length; i++)
-	 {
-	 	getDeal(json_data.restaurants[i], function(deal){
-	 		make_Json(deal)
-	 	});
-	 }
+/*function display () {
+    console.log("LOOOOOOOOOL");
+}*/
+
+//console.log(json_data);
+
+var requests = json_data.restaurants.map(restaurant => get_id(restaurant).then(la_f_id=>{
+	getDeal(restaurant,la_f_id)
+
+}));
+
+Promise.all(requests)
+  .then(
+                console.log("ok")
+            )
+  .catch(error => console.log(error));
+	 
+
+
+
+/*function getLafourchette (restaurant) {
+  const configuration = {
+    'uri': `https://lafourchette/searchRefine?${restaurant}`
+  }
+
+  return new Promise((resolve, reject) => {
+    request(configuration, (err, response, body) => {
+      if (err) {
+        return reject(err);
+      }
+
+       // parse body
+
+       const link = parse(body);
+
+       return resolve(link);
+    })
+  });
 }
 
-getAllDeals();
 
+getLafourchette('le courot')
+  .then(result => console.log(result))
+  .catch(err => console.error(err));
+
+const restaurants = ['le courot', 'yannick aleno', ..., 'xxxxx'];
+const requests = restaurants.map(restaurant => getLafourchette(restaurant));
+
+
+Promise.all(requests)
+  .then(function display (results) {
+    console.log(results);
+  })
+  .catch(error => console.log(error));*/
