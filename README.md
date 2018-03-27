@@ -32,8 +32,7 @@ The project was split in 2 parts :
 # Screenshots
 
 
-![screenshot1](https://raw.githubusercontent.com/MiguelRamosF/top-chef/blob/master/img/Capture.JPG)
-
+![screenshot1](https://raw.githubusercontent.com/MiguelRamosF/top-chef/master/img/Capture.JPG)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
