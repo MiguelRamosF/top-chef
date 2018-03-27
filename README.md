@@ -29,6 +29,11 @@ The project was split in 2 parts :
   - Design with Bootstrap 
 ```
 
+# Screenshots
+
+
+![capture](https://raw.githubusercontent.com/MiguelRamosF/top-chef/blob/master/img/Capture.JPG)
+
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

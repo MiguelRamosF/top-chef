@@ -89,7 +89,7 @@ class SearchBar extends React.Component {
 
       <div class="form-group">
 
-      <h2 class="text-center"><span>Top Chef Project</span>There's really no reason to pay full retail price for most starred restaurants because there are so many resources on the Web that can help you compare prices. This web application helps you to get the best deals on starred France's resturants</h2>    
+      <h2 class="text-center"><span>Top Chef Project</span>There's really no reason to pay full retail price for most starred restaurants because there are so many resources on the Web that can help you compare prices. This web application helps you to get the best deals on starred France's restaurants</h2>    
         <label >Enter the name of the restaurant :</label>
         <form >
         <input
